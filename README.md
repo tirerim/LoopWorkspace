@@ -1,34 +1,36 @@
 # Attention please!
 
-There are so many people who rely on the FreeAPS fork of Loop that it has been forked again to the loopnlearn github site. There are no guarantees as to how long this support can be maintained, but the loopnlearn team will do their best and are willing to accept pull requests.
+FreeAPS is no longer supported.
 
-With the advent of maintenance by loopnlearn, the [FreeAPS crowdin](https://crowdin.com/project/freeaps-settings) has been expanded to cover more strings.
+* branch freeaps: limited to Xcode 14 and iOS 16
+* branch freeaps_dev: modified to build with Xcode 15
+* other branches in this repository are tied to LoopKit (Loop 3)
 
-Ivan - the originator of the FreeAPS project (ivalkou github site) has frozen his repository. All the forces of Ivan's team are aimed at developing a new project FreeAPS X based on OpenAPS.
-
-# LoopWorkspace - Build Using Script
-
-To simplify building FreeAPS, the loopnlearn team developed a script. It works for Loop and for FreeAPS and is documented in two places. (LoopDocs has more details and graphics - both sites have the same information.)
-
-**If you have not already ensured your macOS and Xcode versions are consistent with your iPhone iOS, please use these links and follow the instructions.**
-
-* Loop and Learn website: [Build Select Script](https://www.loopandlearn.org/build-select/)
-* LoopDocs website: [LoopDocs Updating](https://loopkit.github.io/loopdocs/build/updating)
-
-# LoopWorkspace - Manual Build
-
-This section has the manual steps if you do not choose to use the script.
+# LoopWorkspace - How To Build
 
 ## Clone
 
 This repository uses git submodules to pull in the various workspace dependencies.
 
-To manually clone this repo (without using the script mentioned above):
+To manually clone this repo:
+
+For freeaps, copy and paste this into the terminal
 
 ```
-git clone --branch=freeaps --recurse-submodules https://github.com/loopnlearn/LoopWorkspace
+export BRANCH_NAME="freeaps"
 ```
 
+For freeaps_dev, copy and paste this into the terminal
+
+```
+export BRANCH_NAME="freeaps_dev"
+```
+
+Then issue the clone command.
+
+```
+git clone --branch=$BRANCH_NAME --recurse-submodules https://github.com/loopnlearn/LoopWorkspace
+```
 
 ## Open
 
