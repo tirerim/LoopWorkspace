@@ -1,46 +1,24 @@
-# Attention please!
+## Do Not Use This Branch
 
-There are so many people who rely on the FreeAPS fork of Loop that it has been forked again to the loopnlearn github site. There are no guarantees as to how long this support can be maintained, but the loopnlearn team will do their best and are willing to accept pull requests.
+This branch is kept for historical reasons. It is not supported and might not be usable with newer versions of Xcode and iOS.
 
-With the advent of maintenance by loopnlearn, the [FreeAPS crowdin](https://crowdin.com/project/freeaps-settings) has been expanded to cover more strings.
+Please refer to the original repository to build Loop Verson 3 (and later): https://github.com/LoopKit/LoopWorkspace
 
-Ivan - the originator of the FreeAPS project (ivalkou github site) has frozen his repository. All the forces of Ivan's team are aimed at developing a new project FreeAPS X based on OpenAPS.
+* That is where Loop updates originate. 
 
-# LoopWorkspace - Build Using Script
+* The `main` and `dev` branches for this GitHub username (loopnlearn) fork of LoopWorkspace are manually updated to match LoopKit / LoopWorkspace, but you should not rely on this process.
 
-To simplify building FreeAPS, the loopnlearn team developed a script. It works for Loop and for FreeAPS and is documented in two places. (LoopDocs has more details and graphics - both sites have the same information.)
+* The other branches are no longer supported and should not be used.
 
-**If you have not already ensured your macOS and Xcode versions are consistent with your iPhone iOS, please use these links and follow the instructions.**
+## History
 
-* Loop and Learn website: [Build Select Script](https://www.loopandlearn.org/build-select/)
-* LoopDocs website: [LoopDocs Updating](https://loopkit.github.io/loopdocs/build/updating)
+There was a fork created from LoopKit / LoopWorkspace called ivalkou / LoopWorkspace which was used to create an alternative to Loop version 2, called FreeAPS.
 
-# LoopWorkspace - Manual Build
+This fork, loopnlearn / LoopWorkspace was created from ivalkou / LoopWorkspace and used to support the FreeAPS version of Loop 2 after support was dropped by the ivalkou GitHub account.
 
-This section has the manual steps if you do not choose to use the script.
+* **FreeAPS is no longer supported and should not be used** 
+* Most features people used with FreeAPS are now included in Loop 3 or can be added with customization
 
-## Clone
+Some branches in this repository were configured to add specific customizations for earlier versions of Loop 3. These are no longer needed and are not kept updated. [Customization scripts](https://www.loopandlearn.org/custom-code) are provided instead.
 
-This repository uses git submodules to pull in the various workspace dependencies.
-
-To manually clone this repo (without using the script mentioned above):
-
-```
-git clone --branch=freeaps --recurse-submodules https://github.com/loopnlearn/LoopWorkspace
-```
-
-
-## Open
-
-Change to the cloned directory and open the workspace in Xcode:
-
-```
-cd LoopWorkspace
-xed .
-```
-
-## Build
-
-Select the "Loop (Workspace)" scheme (not the "Loop" scheme) and Build, Run, or Test.
-
-<a href="/docs/scheme-selection.png"><img src="/docs/scheme-selection.png?raw=true" alt="Image showing how to select the Loop (Workspace) scheme in Xcode" width="400"></a>
+* Branches such as **main_lnl_patches** are out-of-date and should not be used
