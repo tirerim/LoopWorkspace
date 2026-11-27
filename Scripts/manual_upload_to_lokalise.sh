@@ -37,13 +37,22 @@ foreach lang in $LANGUAGES
 # modify the hyphen to underscore to support lokalise lang-iso expectation
 lang_iso=$(sed "s/zh-Hans/zh_Hans/g; s/pt-BR/pt_BR/g" <<<"$lang")
 
+# flags updated to default 2026-03-31
+#   cleanup-mode - this deletes any keys in lokalise not in clone;
+#      make sure the appropriate branch, with any new managers is used
+#   replace-modified - this allows us to accept translations from other sources
+#      make sure that if there is new input, it is uploaded promptly to avoid
+#        overwriting what translators provide in lokalise
+# Those same flags, cleanup-mode and replace-modified were removed 2026-10-22
+#    We are about to start uploading from next-dev branch in addition to feat/all-managers branch
+#    It is important to allow different strings from different branches
+#    Before the first upload from next-dev, ensure a snapshot is obtained at lokalise
 lokalise2 \
     --token $LOKALISE_TOKEN \
     --convert-placeholders=false \
     --project-id 414338966417c70d7055e2.75119857 \
     file upload \
     --file ${lang}.xliff \
-    --cleanup-mode \
     --lang-iso ${lang_iso}
 end
 

@@ -12,11 +12,12 @@ env:
   UPSTREAM_REPO: LoopKit/LoopWorkspace
   UPSTREAM_BRANCH: ${{ github.ref_name }} # branch on upstream repository to sync from (replace with specific branch name if needed)
   TARGET_BRANCH: ${{ github.ref_name }} # target branch on fork to be kept in sync
+  FASTLANE_SKIP_UPDATE_CHECK: true
 
 jobs:
   # use a single runner for these sequential steps
   check_status:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     name: Check status to decide whether to build
     permissions:
       contents: write
@@ -90,7 +91,7 @@ jobs:
         if: |
           steps.workflow-permission.outputs.has_permission == 'true' &&
           (vars.SCHEDULED_BUILD != 'false' || vars.SCHEDULED_SYNC != 'false')
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           token: ${{ secrets.GH_PAT }}
 
@@ -100,7 +101,7 @@ jobs:
           steps.workflow-permission.outputs.has_permission == 'true' &&
           vars.SCHEDULED_SYNC != 'false' && github.repository_owner != 'LoopKit'
         id: sync
-        uses: aormsby/Fork-Sync-With-Upstream-action@v3.4.1
+        uses: aormsby/Fork-Sync-With-Upstream-action@v3.4.2
         with:
           target_sync_branch: ${{ env.TARGET_BRANCH }}
           shallow_since: 6 months ago
@@ -148,6 +149,30 @@ jobs:
             echo "is_second_instance=false" >> "$GITHUB_OUTPUT"
           fi
 
+  # When a scheduled run finds nothing new to build, cancel the run so it shows
+  # as "cancelled" instead of "success" — a green check should always mean a
+  # new build was made.
+  cancel_when_no_build:
+    needs: check_status
+    name: Cancel run when there is nothing to build
+    runs-on: ubuntu-26.04
+    permissions:
+      actions: write
+    if: |
+      github.event_name == 'schedule' &&
+        !(vars.SCHEDULED_BUILD != 'false' && needs.check_status.outputs.IS_SECOND_IN_MONTH == 'true') &&
+        !(vars.SCHEDULED_SYNC != 'false' && needs.check_status.outputs.NEW_COMMITS == 'true')
+    steps:
+      - name: Cancel the run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "Repository is up to date and no monthly build is due — cancelling this run so it is not reported as a successful build." >> "$GITHUB_STEP_SUMMARY"
+          gh run cancel ${{ github.run_id }} --repo ${{ github.repository }}
+          # Keep the job alive until the cancellation lands, so the run ends as
+          # "cancelled" rather than completing successfully first.
+          sleep 300
+
   # Checks if Distribution certificate is present and valid, optionally nukes and
   # creates new certs if the repository variable ENABLE_NUKE_CERTS == 'true'
   # only run if a build is planned
@@ -165,7 +190,7 @@ jobs:
   build:
     name: Build
     needs: [check_certs, check_status]
-    runs-on: macos-15
+    runs-on: xcode-27
     permissions:
       contents: write
     if:
@@ -175,10 +200,10 @@ jobs:
         (vars.SCHEDULED_SYNC != 'false' && needs.check_status.outputs.NEW_COMMITS == 'true' )
     steps:
       - name: Select Xcode version
-        run: "sudo xcode-select --switch /Applications/Xcode_16.4.app/Contents/Developer"
+        run: "sudo xcode-select --switch /Applications/Xcode_27.1.app/Contents/Developer"
 
       - name: Checkout Repo for building
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           token: ${{ secrets.GH_PAT }}
           submodules: recursive
@@ -255,7 +280,7 @@ jobs:
       # Upload Build artifacts
       - name: Upload build log, IPA and Symbol artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: build-artifacts
           path: |
